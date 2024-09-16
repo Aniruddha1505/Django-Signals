@@ -1,0 +1,23 @@
+# views.py
+from django.db import transaction
+from django.http import HttpResponse
+from .signals import my_signal
+from .models import MyModel
+
+def my_view(request):
+    try:
+        # Start a transaction
+        with transaction.atomic():
+            print("View running, sending signal...")
+            my_signal.send(sender=None)
+
+            # Force a rollback for demonstration purposes
+            if request.GET.get('rollback', 'false') == 'true':
+                print("Forcing rollback...")
+                raise Exception("Simulating an error to rollback the transaction")
+                
+        return HttpResponse("Transaction committed, signal processed.")
+    
+    except Exception as e:
+        print(f"Transaction rolled back due to: {str(e)}")
+        return HttpResponse("Transaction rolled back, signal processed but rolled back.")
