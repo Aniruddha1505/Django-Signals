@@ -1,0 +1,11 @@
+# signals.py
+from django.dispatch import Signal, receiver
+import threading
+
+# Define a custom signal
+my_signal = Signal()
+
+# Receiver for the signal
+@receiver(my_signal)
+def my_signal_handler(sender, **kwargs):
+    print(f"Signal received! Thread ID in signal handler: {threading.get_ident()}")
